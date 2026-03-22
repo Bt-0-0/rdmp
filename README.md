@@ -4,7 +4,7 @@ A curated collection of AI and Machine Learning resources including research pap
 
 ## Live Demo
 
-🔗 **[https://bt-0-0.github.io/rdmp/](https://bt-0-0.github.io/rdmp/)**
+🔗 **[...🦆...](https://bt-0-0.github.io/rdmp/)**
 
 ## Pages
 
