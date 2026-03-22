@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIML Resource Hub — Dev Edition</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Flat Dev Colors */
+            --bg-primary: #1e1e1e;
+            --bg-secondary: #252526;
+            --bg-tertiary: #2d2d30;
+            --bg-elevated: #3c3c3c;
+            --accent-blue: #007acc;
+            --accent-green: #4ec9b0;
+            --accent-purple: #c586c0;
+            --accent-orange: #ce9178;
+            --accent-yellow: #dcdcaa;
+            --accent-red: #f48771;
+            --text-primary: #d4d4d4;
+            --text-secondary: #9d9d9d;
+            --text-muted: #6a6a6a;
+            --border: #3e3e42;
+            --success: #89d185;
+            --warning: #d7ba7d;
+            --error: #f14c4c;
+
+            /* Terminal colors */
+            --term-green: #44ff44;
+            --term-blue: #44ddff;
+            --term-purple: #cc44ff;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated grid background */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                linear-gradient(90deg, var(--bg-secondary) 1px, transparent 1px),
+                linear-gradient(var(--bg-secondary) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.3;
+            z-index: 0;
+            animation: gridScroll 20s linear infinite;
+        }
+
+        @keyframes gridScroll {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-elevated);
+            border-radius: 6px;
+            border: 2px solid var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+
+        .container {
+            position: relative;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--border);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        .logo::before {
+            content: '>';
+            color: var(--accent-green);
+            font-size: 24px;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-icon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Hero */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+
+        .terminal-line {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--accent-green);
+            text-align: left;
+            max-width: 600px;
+            margin: 24px auto;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .terminal-line::before {
+            content: '$ ';
+            color: var(--accent-blue);
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 32px;
+        }
+
+        .filter-group {
+            margin-bottom: 16px;
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border-color: var(--accent-blue);
+        }
+
+        .filter-btn.active {
+            background: var(--accent-blue);
+            color: #fff;
+            border-color: var(--accent-blue);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.1);
+        }
+
+        .search-box::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Section Headers */
+        .section-header {
+            margin: 60px 0 32px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-header h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 28px;
+            color: var(--accent-blue);
+            margin-bottom: 8px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Resource Cards */
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 48px;
+        }
+
+        .resource-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .resource-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-blue);
+            transform: translateX(-4px);
+            transition: transform 0.2s;
+        }
+
+        .resource-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-4px);
+        }
+
+        .resource-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .tag {
+            padding: 4px 8px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-actions {
+            margin-top: 16px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: #fff;
+            border-color: var(--accent-blue);
+        }
+
+        .btn-primary:hover {
+            background: #0098ff;
+            transform: translateY(-2px);
+        }
+
+        /* Quick Blocks */
+        .quick-blocks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .quick-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+
+        .quick-block:hover {
+            border-color: var(--accent-green);
+            background: var(--bg-tertiary);
+        }
+
+        .quick-block h4 {
+            font-size: 15px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .quick-block p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--accent-orange);
+            border-left: 4px solid var(--accent-orange);
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin-bottom: 32px;
+        }
+
+        .info-box h3 {
+            font-size: 16px;
+            color: var(--accent-orange);
+            margin-bottom: 8px;
+        }
+
+        .info-box p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 2px solid var(--border);
+            padding: 40px 0;
+            margin-top: 80px;
+            text-align: center;
+        }
+
+        .footer-content {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .footer-content a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+
+        .footer-content a:hover {
+            text-decoration: underline;
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .header-stats {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .resource-grid,
+            .quick-blocks-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-buttons {
+                flex-direction: column;
+            }
+
+            .filter-btn {
+                width: 100%;
+            }
+        }
+
+        /* Color variants for different categories */
+        .color-ml { --card-accent: var(--accent-blue); }
+        .color-math { --card-accent: var(--accent-purple); }
+        .color-python { --card-accent: var(--accent-green); }
+        .color-stats { --card-accent: var(--accent-orange); }
+        .color-dl { --card-accent: var(--accent-red); }
+        .color-nlp { --card-accent: var(--accent-yellow); }
+        .color-cv { --card-accent: #00d9ff; }
+        .color-rl { --card-accent: #ff6b9d; }
+        .color-viz { --card-accent: #ffa500; }
+        .color-tools { --card-accent: #4ec9b0; }
+        .color-algo { --card-accent: #9370db; }
+        .color-mlops { --card-accent: #32cd32; }
+
+        [class*="color-"] .card-icon {
+            background: var(--card-accent);
+            opacity: 0.15;
+        }
+
+        [class*="color-"]:hover .card-icon {
+            opacity: 0.25;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">AIML.hub</div>
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon" style="background: var(--accent-blue);"></span>
+                        <span>80+ Resources</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon" style="background: var(--accent-green);"></span>
+                        <span>13 Categories</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Hero -->
+        <section class="hero fade-in">
+            <h1>AIML Resource Hub</h1>
+            <p>80+ curated AI/ML resources: GitHub repos, docs, books, cheat sheets & interactive tools. All free, no signup required.</p>
+            <div class="terminal-line">npm install knowledge --save-dev</div>
+        </section>
+
+        <!-- Info Box -->
+        <div class="info-box fade-in">
+            <h3>💡 Resource Guidelines</h3>
+            <p>All resources are FREE and require NO signup/login. Includes: GitHub repos, documentation, free books, cheat sheets, and interactive tools. No videos, audio, or paywalls — just pure text-based learning.</p>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section fade-in">
+            <div class="filter-group">
+                <label class="filter-label">// Filter by Category</label>
+                <div class="filter-buttons" id="category-filters">
+                    <button class="filter-btn active" data-category="all">All</button>
+                    <button class="filter-btn" data-category="ml">Machine Learning</button>
+                    <button class="filter-btn" data-category="dl">Deep Learning</button>
+                    <button class="filter-btn" data-category="math">Mathematics</button>
+                    <button class="filter-btn" data-category="python">Python</button>
+                    <button class="filter-btn" data-category="stats">Statistics</button>
+                    <button class="filter-btn" data-category="nlp">NLP</button>
+                    <button class="filter-btn" data-category="cv">Computer Vision</button>
+                    <button class="filter-btn" data-category="rl">Reinforcement Learning</button>
+                    <button class="filter-btn" data-category="viz">Data Viz</button>
+                    <button class="filter-btn" data-category="tools">Tools & Libraries</button>
+                    <button class="filter-btn" data-category="algo">Algorithms</button>
+                    <button class="filter-btn" data-category="mlops">MLOps</button>
+                </div>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">// Search Resources</label>
+                <input type="text" class="search-box" id="search-box" placeholder="Search by title, description, or tag...">
+            </div>
+        </div>
+
+        <!-- Main Resources -->
+        <div class="section-header fade-in">
+            <h2>📚 Main Resources</h2>
+            <p>Comprehensive guides, books, tutorials, GitHub repos & docs — all text-based, no signup required</p>
+        </div>
+
+        <div class="resource-grid" id="main-resources">
+            <!-- ML Resources -->
+            <div class="resource-card color-ml" data-category="ml">
+                <div class="card-icon">🎯</div>
+                <div class="card-tags">
+                    <span class="tag">ML</span>
+                    <span class="tag">Cheatsheet</span>
+                </div>
+                <h3 class="card-title">Stanford CS229 Cheat Sheets</h3>
+                <p class="card-description">Comprehensive ML cheat sheets covering supervised learning, unsupervised learning, and deep learning fundamentals.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 2-3 hrs</div>
+                    <div class="meta-item">📄 PDF</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://stanford.edu/~shervine/teaching/cs-229/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-ml" data-category="ml">
+                <div class="card-icon">📖</div>
+                <div class="card-tags">
+                    <span class="tag">ML</span>
+                    <span class="tag">Reference</span>
+                </div>
+                <h3 class="card-title">ML Cheatsheet (Readthedocs)</h3>
+                <p class="card-description">Brief visual explanations of ML concepts with diagrams and code snippets.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 1-2 hrs</div>
+                    <div class="meta-item">🌐 Web</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://ml-cheatsheet.readthedocs.io/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-python" data-category="python ml">
+                <div class="card-icon">📊</div>
+                <div class="card-tags">
+                    <span class="tag">Python</span>
+                    <span class="tag">Data Science</span>
+                </div>
+                <h3 class="card-title">Python Data Science Handbook</h3>
+                <p class="card-description">Complete guide to NumPy, Pandas, Matplotlib, and Scikit-Learn with practical examples.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 10+ hrs</div>
+                    <div class="meta-item">📘 Book</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-ml" data-category="ml">
+                <div class="card-icon">🎓</div>
+                <div class="card-tags">
+                    <span class="tag">ML</span>
+                    <span class="tag">Course</span>
+                </div>
+                <h3 class="card-title">Google ML Crash Course</h3>
+                <p class="card-description">Fast-paced, practical introduction to ML with TensorFlow APIs, featuring video lectures and hands-on exercises.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 15 hrs</div>
+                    <div class="meta-item">🎥 Video</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://developers.google.com/machine-learning/crash-course" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-python" data-category="python">
+                <div class="card-icon">🐍</div>
+                <div class="card-tags">
+                    <span class="tag">Python</span>
+                    <span class="tag">Pandas</span>
+                </div>
+                <h3 class="card-title">W3Schools Python & Pandas</h3>
+                <p class="card-description">Interactive tutorials for Python basics and Pandas data manipulation.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 3-5 hrs</div>
+                    <div class="meta-item">💻 Interactive</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://www.w3schools.com/python/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-ml" data-category="ml">
+                <div class="card-icon">📝</div>
+                <div class="card-tags">
+                    <span class="tag">ML</span>
+                    <span class="tag">Theory</span>
+                </div>
+                <h3 class="card-title">Stanford CS229 Lecture Notes</h3>
+                <p class="card-description">In-depth lecture notes covering supervised learning, learning theory, and reinforcement learning.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 20+ hrs</div>
+                    <div class="meta-item">📄 PDF</div>
+                </div>
+                <div class="card-actions">
+                    <a href="http://cs229.stanford.edu/syllabus.html" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <!-- Deep Learning Resources -->
+            <div class="resource-card color-dl" data-category="dl">
+                <div class="card-icon">🧠</div>
+                <div class="card-tags">
+                    <span class="tag">Deep Learning</span>
+                    <span class="tag">CV</span>
+                </div>
+                <h3 class="card-title">Stanford CS231n Notes</h3>
+                <p class="card-description">Convolutional Neural Networks for Visual Recognition — comprehensive notes on CNNs and computer vision.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 15+ hrs</div>
+                    <div class="meta-item">🌐 Web</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://cs231n.github.io/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-dl" data-category="dl">
+                <div class="card-icon">📚</div>
+                <div class="card-tags">
+                    <span class="tag">Deep Learning</span>
+                    <span class="tag">Interactive</span>
+                </div>
+                <h3 class="card-title">Dive into Deep Learning (d2l.ai)</h3>
+                <p class="card-description">Interactive deep learning book with code, math, and discussions. Includes PyTorch implementations.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 30+ hrs</div>
+                    <div class="meta-item">💻 Jupyter</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://d2l.ai/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-dl" data-category="dl">
+                <div class="card-icon">🔥</div>
+                <div class="card-tags">
+                    <span class="tag">Deep Learning</span>
+                    <span class="tag">Theory</span>
+                </div>
+                <h3 class="card-title">Neural Networks & Deep Learning</h3>
+                <p class="card-description">Free online book by Michael Nielsen explaining neural networks and deep learning fundamentals.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 10+ hrs</div>
+                    <div class="meta-item">📘 Book</div>
+                </div>
+                <div class="card-actions">
+                    <a href="http://neuralnetworksanddeeplearning.com/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <!-- Math Resources -->
+            <div class="resource-card color-math" data-category="math">
+                <div class="card-icon">∑</div>
+                <div class="card-tags">
+                    <span class="tag">Math</span>
+                    <span class="tag">Linear Algebra</span>
+                </div>
+                <h3 class="card-title">Mathematics for Machine Learning</h3>
+                <p class="card-description">Comprehensive guide covering linear algebra, calculus, and probability for ML.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 20+ hrs</div>
+                    <div class="meta-item">📘 Book</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://mml-book.github.io/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-stats" data-category="stats math">
+                <div class="card-icon">📈</div>
+                <div class="card-tags">
+                    <span class="tag">Probability</span>
+                    <span class="tag">Interactive</span>
+                </div>
+                <h3 class="card-title">Seeing Theory (Probability)</h3>
+                <p class="card-description">Visual introduction to probability and statistics with interactive visualizations.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 3-4 hrs</div>
+                    <div class="meta-item">🎨 Visual</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://seeing-theory.brown.edu/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <!-- ML Library -->
+            <div class="resource-card color-ml" data-category="ml python">
+                <div class="card-icon">🛠️</div>
+                <div class="card-tags">
+                    <span class="tag">ML</span>
+                    <span class="tag">Library</span>
+                </div>
+                <h3 class="card-title">Scikit-Learn User Guide</h3>
+                <p class="card-description">Official documentation for sklearn — classification, regression, clustering, and more.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 5+ hrs</div>
+                    <div class="meta-item">📄 Docs</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://scikit-learn.org/stable/user_guide.html" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-stats" data-category="stats ml">
+                <div class="card-icon">📊</div>
+                <div class="card-tags">
+                    <span class="tag">Statistics</span>
+                    <span class="tag">ML</span>
+                </div>
+                <h3 class="card-title">Intro to Statistical Learning (ISLR)</h3>
+                <p class="card-description">Statistical learning methods with R examples — covers regression, classification, resampling, and more.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 30+ hrs</div>
+                    <div class="meta-item">📘 Book</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://www.statlearning.com/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <!-- NLP Resources -->
+            <div class="resource-card color-nlp" data-category="nlp">
+                <div class="card-icon">💬</div>
+                <div class="card-tags">
+                    <span class="tag">NLP</span>
+                    <span class="tag">Linguistics</span>
+                </div>
+                <h3 class="card-title">Speech & Language Processing</h3>
+                <p class="card-description">Comprehensive NLP textbook covering language models, syntax, semantics, and machine translation.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 40+ hrs</div>
+                    <div class="meta-item">📘 Book</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://web.stanford.edu/~jurafsky/slp3/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-nlp" data-category="nlp dl">
+                <div class="card-icon">🗣️</div>
+                <div class="card-tags">
+                    <span class="tag">NLP</span>
+                    <span class="tag">Deep Learning</span>
+                </div>
+                <h3 class="card-title">Stanford CS224n NLP Notes</h3>
+                <p class="card-description">Natural Language Processing with Deep Learning — word vectors, neural networks, transformers.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 15+ hrs</div>
+                    <div class="meta-item">🌐 Web</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://web.stanford.edu/class/cs224n/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <!-- Python Resources -->
+            <div class="resource-card color-python" data-category="python">
+                <div class="card-icon">📚</div>
+                <div class="card-tags">
+                    <span class="tag">Python</span>
+                    <span class="tag">Reference</span>
+                </div>
+                <h3 class="card-title">Python Official Docs</h3>
+                <p class="card-description">The official Python documentation — comprehensive and authoritative.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ Reference</div>
+                    <div class="meta-item">📄 Docs</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://docs.python.org/3/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-python" data-category="python">
+                <div class="card-icon">⚡</div>
+                <div class="card-tags">
+                    <span class="tag">Python</span>
+                    <span class="tag">Quick Ref</span>
+                </div>
+                <h3 class="card-title">Learn X in Y Minutes (Python)</h3>
+                <p class="card-description">Whirlwind tour of Python — learn syntax and key features in minutes.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 30 min</div>
+                    <div class="meta-item">🚀 Quick</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://learnxinyminutes.com/docs/python/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-stats" data-category="stats python">
+                <div class="card-icon">📉</div>
+                <div class="card-tags">
+                    <span class="tag">Statistics</span>
+                    <span class="tag">Python</span>
+                </div>
+                <h3 class="card-title">Think Stats (Free Book)</h3>
+                <p class="card-description">Probability and statistics for programmers with Python examples.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 8+ hrs</div>
+                    <div class="meta-item">📘 Book</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://greenteapress.com/thinkstats2/html/index.html" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <!-- Computer Vision Resources -->
+            <div class="resource-card color-cv" data-category="cv dl">
+                <div class="card-icon">👁️</div>
+                <div class="card-tags">
+                    <span class="tag">Computer Vision</span>
+                    <span class="tag">Tutorial</span>
+                </div>
+                <h3 class="card-title">OpenCV Tutorial (Docs)</h3>
+                <p class="card-description">Official OpenCV documentation with practical examples for image processing and computer vision.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 3-5 hrs</div>
+                    <div class="meta-item">📄 Docs</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-cv" data-category="cv">
+                <div class="card-icon">🖼️</div>
+                <div class="card-tags">
+                    <span class="tag">Computer Vision</span>
+                    <span class="tag">Free Book</span>
+                </div>
+                <h3 class="card-title">Computer Vision: Algorithms & Applications</h3>
+                <p class="card-description">Comprehensive free textbook by Richard Szeliski covering CV fundamentals to advanced topics.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 30+ hrs</div>
+                    <div class="meta-item">📘 Book</div>
+                </div>
+                <div class="card-actions">
+                    <a href="http://szeliski.org/Book/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <!-- Reinforcement Learning -->
+            <div class="resource-card color-rl" data-category="rl">
+                <div class="card-icon">🎮</div>
+                <div class="card-tags">
+                    <span class="tag">RL</span>
+                    <span class="tag">Free Book</span>
+                </div>
+                <h3 class="card-title">Sutton & Barto RL Book</h3>
+                <p class="card-description">The definitive RL textbook — free online version covering theory and practice.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 40+ hrs</div>
+                    <div class="meta-item">📘 Book</div>
+                </div>
+                <div class="card-actions">
+                    <a href="http://incompleteideas.net/book/the-book-2nd.html" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-rl" data-category="rl">
+                <div class="card-icon">🤖</div>
+                <div class="card-tags">
+                    <span class="tag">RL</span>
+                    <span class="tag">Notes</span>
+                </div>
+                <h3 class="card-title">David Silver's RL Course Notes</h3>
+                <p class="card-description">Lecture slides from UCL/DeepMind RL course — concise and practical.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 5-8 hrs</div>
+                    <div class="meta-item">📄 PDF</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://www.davidsilver.uk/teaching/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <!-- Data Visualization -->
+            <div class="resource-card color-viz" data-category="viz python">
+                <div class="card-icon">📊</div>
+                <div class="card-tags">
+                    <span class="tag">Visualization</span>
+                    <span class="tag">Gallery</span>
+                </div>
+                <h3 class="card-title">Python Graph Gallery</h3>
+                <p class="card-description">Hundreds of chart examples with code — Matplotlib, Seaborn, Plotly.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 2-3 hrs</div>
+                    <div class="meta-item">💻 Code</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://www.python-graph-gallery.com/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-viz" data-category="viz">
+                <div class="card-icon">🎨</div>
+                <div class="card-tags">
+                    <span class="tag">Visualization</span>
+                    <span class="tag">Guide</span>
+                </div>
+                <h3 class="card-title">Data Visualization Catalogue</h3>
+                <p class="card-description">Visual reference for choosing the right chart type for your data.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 1-2 hrs</div>
+                    <div class="meta-item">🌐 Web</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://datavizcatalogue.com/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <!-- Tools & Libraries -->
+            <div class="resource-card color-tools" data-category="tools python">
+                <div class="card-icon">🔧</div>
+                <div class="card-tags">
+                    <span class="tag">PyTorch</span>
+                    <span class="tag">Docs</span>
+                </div>
+                <h3 class="card-title">PyTorch Tutorials</h3>
+                <p class="card-description">Official PyTorch tutorials — quick start to advanced topics.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 5+ hrs</div>
+                    <div class="meta-item">📄 Docs</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://pytorch.org/tutorials/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-tools" data-category="tools python">
+                <div class="card-icon">🧮</div>
+                <div class="card-tags">
+                    <span class="tag">TensorFlow</span>
+                    <span class="tag">Docs</span>
+                </div>
+                <h3 class="card-title">TensorFlow Official Guides</h3>
+                <p class="card-description">TensorFlow 2.x guides and tutorials — beginner to advanced.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 5+ hrs</div>
+                    <div class="meta-item">📄 Docs</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://www.tensorflow.org/guide" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-tools" data-category="tools">
+                <div class="card-icon">📦</div>
+                <div class="card-tags">
+                    <span class="tag">GitHub</span>
+                    <span class="tag">Awesome List</span>
+                </div>
+                <h3 class="card-title">Awesome Machine Learning</h3>
+                <p class="card-description">Curated list of ML frameworks, libraries, and resources on GitHub.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 1-2 hrs</div>
+                    <div class="meta-item">🐙 GitHub</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://github.com/josephmisiti/awesome-machine-learning" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-tools" data-category="tools dl">
+                <div class="card-icon">⚡</div>
+                <div class="card-tags">
+                    <span class="tag">GitHub</span>
+                    <span class="tag">Awesome List</span>
+                </div>
+                <h3 class="card-title">Awesome Deep Learning</h3>
+                <p class="card-description">Comprehensive DL resources, papers, and implementations on GitHub.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 1-2 hrs</div>
+                    <div class="meta-item">🐙 GitHub</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://github.com/ChristosChristofidis/awesome-deep-learning" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <!-- Algorithms -->
+            <div class="resource-card color-algo" data-category="algo python">
+                <div class="card-icon">🔍</div>
+                <div class="card-tags">
+                    <span class="tag">Algorithms</span>
+                    <span class="tag">GitHub</span>
+                </div>
+                <h3 class="card-title">The Algorithms - Python</h3>
+                <p class="card-description">All algorithms implemented in Python — educational implementations with explanations.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 5+ hrs</div>
+                    <div class="meta-item">🐙 GitHub</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://github.com/TheAlgorithms/Python" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-algo" data-category="algo">
+                <div class="card-icon">📐</div>
+                <div class="card-tags">
+                    <span class="tag">Algorithms</span>
+                    <span class="tag">Visual</span>
+                </div>
+                <h3 class="card-title">VisuAlgo</h3>
+                <p class="card-description">Visualizing data structures and algorithms through animation.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 2-3 hrs</div>
+                    <div class="meta-item">🎨 Visual</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://visualgo.net/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <!-- MLOps -->
+            <div class="resource-card color-mlops" data-category="mlops">
+                <div class="card-icon">🚀</div>
+                <div class="card-tags">
+                    <span class="tag">MLOps</span>
+                    <span class="tag">GitHub</span>
+                </div>
+                <h3 class="card-title">Awesome MLOps</h3>
+                <p class="card-description">Curated list of MLOps tools, best practices, and resources.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 2-3 hrs</div>
+                    <div class="meta-item">🐙 GitHub</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://github.com/visenger/awesome-mlops" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-mlops" data-category="mlops">
+                <div class="card-icon">📊</div>
+                <div class="card-tags">
+                    <span class="tag">MLOps</span>
+                    <span class="tag">Guide</span>
+                </div>
+                <h3 class="card-title">Google MLOps Guide</h3>
+                <p class="card-description">Best practices for ML engineering and MLOps from Google Cloud.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 3-4 hrs</div>
+                    <div class="meta-item">📄 Docs</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <!-- Quick References & Cheat Sheets -->
+            <div class="resource-card color-python" data-category="python">
+                <div class="card-icon">📝</div>
+                <div class="card-tags">
+                    <span class="tag">Pandas</span>
+                    <span class="tag">Cheatsheet</span>
+                </div>
+                <h3 class="card-title">Pandas Cheat Sheet</h3>
+                <p class="card-description">Quick reference for Pandas operations — official guide.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 30 min</div>
+                    <div class="meta-item">📄 PDF</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://pandas.pydata.org/Pandas_Cheat_Sheet.pdf" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-python" data-category="python">
+                <div class="card-icon">🔢</div>
+                <div class="card-tags">
+                    <span class="tag">NumPy</span>
+                    <span class="tag">Cheatsheet</span>
+                </div>
+                <h3 class="card-title">NumPy Cheat Sheet</h3>
+                <p class="card-description">Essential NumPy operations and array manipulations.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 20 min</div>
+                    <div class="meta-item">📄 PDF</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Numpy_Python_Cheat_Sheet.pdf" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-ml" data-category="ml">
+                <div class="card-icon">🎯</div>
+                <div class="card-tags">
+                    <span class="tag">ML</span>
+                    <span class="tag">Cheatsheet</span>
+                </div>
+                <h3 class="card-title">Scikit-Learn Cheat Sheet</h3>
+                <p class="card-description">Quick reference for sklearn algorithms and workflows.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 20 min</div>
+                    <div class="meta-item">📄 PDF</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Scikit_Learn_Cheat_Sheet_Python.pdf" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-viz" data-category="viz python">
+                <div class="card-icon">📈</div>
+                <div class="card-tags">
+                    <span class="tag">Matplotlib</span>
+                    <span class="tag">Cheatsheet</span>
+                </div>
+                <h3 class="card-title">Matplotlib Cheat Sheet</h3>
+                <p class="card-description">Visual guide to creating plots with Matplotlib.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 20 min</div>
+                    <div class="meta-item">📄 PDF</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Python_Matplotlib_Cheat_Sheet.pdf" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <!-- GitHub Collections -->
+            <div class="resource-card color-ml" data-category="ml">
+                <div class="card-icon">📚</div>
+                <div class="card-tags">
+                    <span class="tag">ML</span>
+                    <span class="tag">GitHub</span>
+                </div>
+                <h3 class="card-title">ML Interview Prep</h3>
+                <p class="card-description">Comprehensive ML interview questions and answers on GitHub.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 8+ hrs</div>
+                    <div class="meta-item">🐙 GitHub</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://github.com/khangich/machine-learning-interview" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-dl" data-category="dl">
+                <div class="card-icon">📖</div>
+                <div class="card-tags">
+                    <span class="tag">Deep Learning</span>
+                    <span class="tag">GitHub</span>
+                </div>
+                <h3 class="card-title">Deep Learning Papers Reading Roadmap</h3>
+                <p class="card-description">Curated papers to understand deep learning from basics to SOTA.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 20+ hrs</div>
+                    <div class="meta-item">🐙 GitHub</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://github.com/floodsung/Deep-Learning-Papers-Reading-Roadmap" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-nlp" data-category="nlp">
+                <div class="card-icon">💬</div>
+                <div class="card-tags">
+                    <span class="tag">NLP</span>
+                    <span class="tag">GitHub</span>
+                </div>
+                <h3 class="card-title">Awesome NLP</h3>
+                <p class="card-description">Curated list of NLP resources, libraries, and datasets.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 1-2 hrs</div>
+                    <div class="meta-item">🐙 GitHub</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://github.com/keon/awesome-nlp" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <!-- Free Books & Notes -->
+            <div class="resource-card color-dl" data-category="dl">
+                <div class="card-icon">📕</div>
+                <div class="card-tags">
+                    <span class="tag">Deep Learning</span>
+                    <span class="tag">Free Book</span>
+                </div>
+                <h3 class="card-title">Deep Learning Book (Goodfellow)</h3>
+                <p class="card-description">The definitive deep learning textbook — free HTML version.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 40+ hrs</div>
+                    <div class="meta-item">📘 Book</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://www.deeplearningbook.org/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-math" data-category="math">
+                <div class="card-icon">∫</div>
+                <div class="card-tags">
+                    <span class="tag">Calculus</span>
+                    <span class="tag">Free Book</span>
+                </div>
+                <h3 class="card-title">Calculus Made Easy</h3>
+                <p class="card-description">Classic calculus textbook — simple explanations, public domain.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 10+ hrs</div>
+                    <div class="meta-item">📘 Book</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://www.gutenberg.org/ebooks/33283" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-python" data-category="python">
+                <div class="card-icon">🐍</div>
+                <div class="card-tags">
+                    <span class="tag">Python</span>
+                    <span class="tag">Free Book</span>
+                </div>
+                <h3 class="card-title">Automate the Boring Stuff</h3>
+                <p class="card-description">Practical Python programming for beginners — free online version.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 12+ hrs</div>
+                    <div class="meta-item">📘 Book</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://automatetheboringstuff.com/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-ml" data-category="ml python">
+                <div class="card-icon">🤖</div>
+                <div class="card-tags">
+                    <span class="tag">ML</span>
+                    <span class="tag">Free Book</span>
+                </div>
+                <h3 class="card-title">Hands-On ML (Preview)</h3>
+                <p class="card-description">Sample chapters from O'Reilly's popular ML book — practical approach.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 5+ hrs</div>
+                    <div class="meta-item">📘 Book</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://github.com/ageron/handson-ml3" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <!-- Interactive Learning -->
+            <div class="resource-card color-python" data-category="python">
+                <div class="card-icon">🎮</div>
+                <div class="card-tags">
+                    <span class="tag">Python</span>
+                    <span class="tag">Interactive</span>
+                </div>
+                <h3 class="card-title">Python Tutor</h3>
+                <p class="card-description">Visualize Python code execution step-by-step.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 1-2 hrs</div>
+                    <div class="meta-item">💻 Tool</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://pythontutor.com/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-algo" data-category="algo">
+                <div class="card-icon">🧩</div>
+                <div class="card-tags">
+                    <span class="tag">Algorithms</span>
+                    <span class="tag">Practice</span>
+                </div>
+                <h3 class="card-title">Algorithm Visualizer</h3>
+                <p class="card-description">Interactive visualizations of algorithms with code.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 2-3 hrs</div>
+                    <div class="meta-item">🎨 Visual</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://algorithm-visualizer.org/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-math" data-category="math">
+                <div class="card-icon">📐</div>
+                <div class="card-tags">
+                    <span class="tag">Linear Algebra</span>
+                    <span class="tag">Interactive</span>
+                </div>
+                <h3 class="card-title">Immersive Linear Algebra</h3>
+                <p class="card-description">Free linear algebra book with interactive figures.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 8+ hrs</div>
+                    <div class="meta-item">📘 Book</div>
+                </div>
+                <div class="card-actions">
+                    <a href="http://immersivemath.com/ila/index.html" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+
+            <div class="resource-card color-dl" data-category="dl tools">
+                <div class="card-icon">🧪</div>
+                <div class="card-tags">
+                    <span class="tag">Neural Networks</span>
+                    <span class="tag">Interactive</span>
+                </div>
+                <h3 class="card-title">TensorFlow Playground</h3>
+                <p class="card-description">Interactive visualization of neural networks in the browser.</p>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 30 min</div>
+                    <div class="meta-item">🎨 Visual</div>
+                </div>
+                <div class="card-actions">
+                    <a href="https://playground.tensorflow.org/" target="_blank" class="btn btn-primary">Open Resource →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Blocks Section -->
+        <div class="section-header fade-in" style="margin-top: 80px;">
+            <h2>⚡ Quick Learning Blocks</h2>
+            <p>2-4 days each — practical topics you can tackle in any order</p>
+        </div>
+
+        <div class="quick-blocks-grid" id="quick-blocks">
+            <div class="quick-block">
+                <h4>Linear Regression</h4>
+                <p>Understand the basics of linear regression and how it works.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>Logistic Regression</h4>
+                <p>Binary classification using logistic regression.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>Pandas GroupBy & Merge</h4>
+                <p>Data manipulation techniques in Pandas.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>Decision Trees & Random Forest</h4>
+                <p>Tree-based models for classification and regression.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>Confusion Matrix & Metrics</h4>
+                <p>Understanding classification evaluation metrics.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>NumPy Basics</h4>
+                <p>Array operations and numerical computing.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>Matplotlib Plotting</h4>
+                <p>Data visualization with Matplotlib.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>Overfitting & Regularization</h4>
+                <p>Preventing overfitting with regularization techniques.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>Feature Engineering</h4>
+                <p>Creating and transforming features for better models.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>Neural Network Basics</h4>
+                <p>Introduction to neural networks and backpropagation.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>K-Means Clustering</h4>
+                <p>Unsupervised learning with clustering algorithms.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>Cross-Validation</h4>
+                <p>Model validation techniques and hyperparameter tuning.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>Gradient Descent</h4>
+                <p>Understanding optimization algorithms in ML.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>CNN Fundamentals</h4>
+                <p>Convolutional neural networks for image processing.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>RNN & LSTM Basics</h4>
+                <p>Sequence models for time-series and text data.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>PCA & Dimensionality Reduction</h4>
+                <p>Feature reduction and principal component analysis.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>Ensemble Methods</h4>
+                <p>Bagging, boosting, and stacking techniques.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>Image Preprocessing</h4>
+                <p>Data augmentation and preprocessing for CV.</p>
+            </div>
+
+            <div class="quick-block">
+                <h4>Word Embeddings</h4>
+                <p>Word2Vec, GloVe, and embedding techniques.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p>AIML Resource Hub — 80+ Free Resources • No Signup • No Videos</p>
+                <p style="margin-top: 8px; opacity: 0.6;">Built with flat design & dev aesthetics • Curated for developers</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Filter functionality
+        const categoryFilters = document.querySelectorAll('#category-filters .filter-btn');
+        const searchBox = document.getElementById('search-box');
+        const resourceCards = document.querySelectorAll('.resource-card');
+
+        categoryFilters.forEach(btn => {
+            btn.addEventListener('click', () => {
+                categoryFilters.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const category = btn.dataset.category;
+                filterResources(category, searchBox.value);
+            });
+        });
+
+        searchBox.addEventListener('input', (e) => {
+            const activeCategory = document.querySelector('#category-filters .filter-btn.active').dataset.category;
+            filterResources(activeCategory, e.target.value);
+        });
+
+        function filterResources(category, searchTerm) {
+            const term = searchTerm.toLowerCase();
+
+            resourceCards.forEach(card => {
+                const cardCategory = card.dataset.category;
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const description = card.querySelector('.card-description').textContent.toLowerCase();
+                const tags = Array.from(card.querySelectorAll('.tag')).map(t => t.textContent.toLowerCase()).join(' ');
+
+                const matchesCategory = category === 'all' || cardCategory.includes(category);
+                const matchesSearch = !term || title.includes(term) || description.includes(term) || tags.includes(term);
+
+                if (matchesCategory && matchesSearch) {
+                    card.style.display = 'block';
+                    setTimeout(() => card.style.opacity = '1', 10);
+                } else {
+                    card.style.opacity = '0';
+                    setTimeout(() => card.style.display = 'none', 200);
+                }
+            });
+        }
+
+        // Add stagger animation to cards
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('fade-in');
+                    }, index * 50);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.resource-card, .quick-block').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
